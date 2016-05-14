@@ -1,31 +1,14 @@
 defmodule PropTypes do
 
-  def create_type_checker(validate) do
-    fn (props, prop_name, caller_name, options) ->
-      if Map.has_key?(props, prop_name) == false do
-        if Map.has_key?(options, :required) do
-          PropTypes.Error.exception(prop_name, caller_name, "prop_types.required")
-        else
-          nil
-        end
-      else
-        validate.(props, prop_name, caller_name, options)
-      end
-    end
-  end
+  def create_type_checker(validate), do: PropTypes.TypeChecker.create(validate)
+  def create_primitive_type_checker(expected_type), do: PropTypes.TypeChecker.create_primitive(expected_type)
 
-  def create_primitive_type_checker(expected_type) do
-		create_type_checker(fn (props, prop_name, caller_name, _) ->
-      value = Map.get(props, prop_name)
-			type = Tipo.typeof(value)
+  def create_checker(prop_types, caller_name), do: PropTypes.TypeChecker.create_checker(prop_types, caller_name)
+  def create_checker(prop_types), do: PropTypes.TypeChecker.create_checker(prop_types)
 
-			if type != expected_type do
-			  PropTypes.Error.exception(prop_name, caller_name, "prop_types.invalid_type")
-			else
-				nil
-			end
-		end)
-	end
+  def check(props, prop_types, caller_name), do: PropTypes.TypeChecker.check(props, prop_types, caller_name)
+  def check(props, prop_types), do: PropTypes.TypeChecker.check(props, prop_types)
+
 
   def atom(), do: create_primitive_type_checker(:atom)
   def boolean(), do: create_primitive_type_checker(:boolean)
@@ -39,52 +22,32 @@ defmodule PropTypes do
   def map(), do: create_primitive_type_checker(:map)
   def tuple(), do: create_primitive_type_checker(:tuple)
 
-  def check(props, prop_types, caller_name) do
-    not_nil = fn (x) -> x != nil end
+  def implements(expected_interface) do
+    Enum.each(Map.keys(expected_interface), fn (prop_name) ->
+      if Tipo.map?(Map.get(expected_interface, prop_name)) == false do
+        raise (
+          "Invalid Function Interface for " <> prop_name <> " must be functions, " <>
+          "(props: Map, prop_name: String, caller_name: String) return array of errors, error, or null."
+        )
+      end
+    end)
 
-    results = Enum.filter(
-      Enum.map(Map.keys(prop_types), fn (prop_name) ->
-        props_options = Map.get(prop_types, prop_name)
-
-        funcs = Map.get(props_options, :validations)
-        funcs = if Tipo.list?(funcs), do: funcs, else: [funcs]
-
-        results = List.flatten(Enum.filter(
-          Enum.map(funcs, fn (func) ->
-            result = func.(props, prop_name, caller_name, props_options)
-
-            if result != nil do
-              if Tipo.list?(result), do: result, else: [result]
-            else
-              nil
-            end
-          end),
-          not_nil
-        ))
-
-        if results != [] do
-          %{prop_name => results}
-        else
-          nil
-        end
-      end),
-      not_nil
-    )
-
-    if results != [] do
-      Enum.reduce(results, %{}, fn (value, errors) ->
-        Map.merge(errors, value)
-      end)
-    else
-      nil
-    end
+    create_type_checker(fn (props, prop_name, caller_name, _) ->
+      check(Map.get(props, prop_name), expected_interface, caller_name)
+    end)
   end
-  def check(props, prop_types), do: check(props, prop_types, "<<anonymous>>")
 
-  def create_checker(prop_types, caller_name) do
-    fn (props) ->
-      check(props, prop_types, caller_name)
-    end
+  def required(validations) do
+    %{
+      :validations => validations,
+      :required => true
+    }
   end
-  def create_checker(prop_types), do: create_checker(prop_types, "<<anonymous>>")
+
+  def optional(validations) do
+    %{
+      :validations => validations,
+      :required => false
+    }
+  end
 end

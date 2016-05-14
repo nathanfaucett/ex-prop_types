@@ -4,17 +4,20 @@ defmodule PropTypesTest do
 
   test "should" do
     prop_types = %{
-      "username" => %{
-        :validations => [PropTypes.string],
-        :required => true
-      },
-      "password" => %{
-        :validations => [PropTypes.string],
-        :required => true
-      }
+      #%{
+      #  :validations => [PropTypes.string],
+      #  :required => true
+      #}
+      "username" => PropTypes.required(PropTypes.string),
+      "password" => PropTypes.required(PropTypes.string),
+
+      "meta" => PropTypes.optional(PropTypes.implements(%{
+        "address" => PropTypes.required(PropTypes.string),
+        "email" => PropTypes.required(PropTypes.string)
+      }))
     }
 
-    checker = PropTypes.create_checker(prop_types)
+    checker = PropTypes.create_checker(prop_types, "TestChecker")
 
     result = checker.(%{"username" => "nathanfaucett", "password" => "my_password"})
     assert result == nil
@@ -22,14 +25,27 @@ defmodule PropTypesTest do
     result = checker.(%{})
     assert(result ==  %{
       "password" => [%PropTypes.Error{
-        caller_name: "<<anonymous>>",
-        message: "prop_types.required",
-        prop_name: "password"
+        message: "prop_types.required"
       }],
       "username" => [%PropTypes.Error{
-        caller_name: "<<anonymous>>",
-        message: "prop_types.required",
-        prop_name: "username"
+        message: "prop_types.required"
+      }]
+    })
+    result = checker.(%{"meta" => %{}})
+    assert(result ==  %{
+      "password" => [%PropTypes.Error{
+        message: "prop_types.required"
+      }],
+      "username" => [%PropTypes.Error{
+        message: "prop_types.required"
+      }],
+      "meta" => [%{
+        "address" => [%PropTypes.Error{
+          message: "prop_types.required"
+        }],
+        "email" => [%PropTypes.Error{
+          message: "prop_types.required"
+        }]
       }]
     })
   end
