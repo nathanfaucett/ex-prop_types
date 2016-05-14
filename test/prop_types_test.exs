@@ -25,25 +25,37 @@ defmodule PropTypesTest do
     result = checker.(%{})
     assert(result ==  %{
       "password" => [%PropTypes.Error{
+        prop_name: "password",
+        caller_name: "TestChecker",
         message: "prop_types.required"
       }],
       "username" => [%PropTypes.Error{
+        prop_name: "username",
+        caller_name: "TestChecker",
         message: "prop_types.required"
       }]
     })
     result = checker.(%{"meta" => %{}})
     assert(result ==  %{
       "password" => [%PropTypes.Error{
+        prop_name: "password",
+        caller_name: "TestChecker",
         message: "prop_types.required"
       }],
       "username" => [%PropTypes.Error{
+        prop_name: "username",
+        caller_name: "TestChecker",
         message: "prop_types.required"
       }],
       "meta" => [%{
         "address" => [%PropTypes.Error{
+          prop_name: "address",
+          caller_name: "TestChecker.meta",
           message: "prop_types.required"
         }],
         "email" => [%PropTypes.Error{
+          prop_name: "email",
+          caller_name: "TestChecker.meta",
           message: "prop_types.required"
         }]
       }]

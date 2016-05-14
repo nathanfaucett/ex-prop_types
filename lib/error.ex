@@ -1,17 +1,11 @@
 defmodule PropTypes.Error do
 
-  defexception [:message]
+  defexception [:prop_name, :caller_name, :message]
 
-  def exception(_, _, msg) do
-    %PropTypes.Error{
+  def exception(prop_name, caller_name, msg), do: %PropTypes.Error{
+      prop_name: prop_name,
+      caller_name: caller_name,
       message: msg
     }
-  end
-
-  def message(msg) do
-    %PropTypes.Error{
-      message: msg
-    }
-  end
 
 end

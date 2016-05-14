@@ -39,7 +39,7 @@ defmodule PropTypes.TypeChecker do
           nil
         end
       end),
-      fn (x) -> x != nil end
+      &not_nil/1
     )
 
     if results != [] do
@@ -73,7 +73,9 @@ defmodule PropTypes.TypeChecker do
           nil
         end
       end),
-      fn (x) -> x != nil end
+      &not_nil/1
     ))
   end
+
+  def not_nil(value), do: Tipo.nil?(value) == false
 end

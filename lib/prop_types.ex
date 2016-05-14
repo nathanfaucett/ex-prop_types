@@ -9,7 +9,6 @@ defmodule PropTypes do
   def check(props, prop_types, caller_name), do: PropTypes.TypeChecker.check(props, prop_types, caller_name)
   def check(props, prop_types), do: PropTypes.TypeChecker.check(props, prop_types)
 
-
   def atom(), do: create_primitive_type_checker(:atom)
   def boolean(), do: create_primitive_type_checker(:boolean)
   def number(), do: create_primitive_type_checker(:number)
@@ -33,21 +32,17 @@ defmodule PropTypes do
     end)
 
     create_type_checker(fn (props, prop_name, caller_name, _) ->
-      check(Map.get(props, prop_name), expected_interface, caller_name)
+      check(Map.get(props, prop_name), expected_interface, caller_name <> "." <> prop_name)
     end)
   end
 
-  def required(validations) do
-    %{
+  def required(validations), do: %{
       :validations => validations,
       :required => true
     }
-  end
 
-  def optional(validations) do
-    %{
+  def optional(validations), do: %{
       :validations => validations,
       :required => false
     }
-  end
 end
