@@ -29,7 +29,8 @@ defmodule PropTypes.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:tipo, "~> 0.0.3"}]
+    [{:tipo, "~> 0.0.3"},
+      {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 
   defp description do
