@@ -6,7 +6,7 @@ defmodule PropTypes.TypeChecker do
         validate.(props, prop_name, caller_name, prop_options)
       else
         if Map.get(prop_options, :required) == true do
-          PropTypes.Error.exception(prop_name, caller_name, "prop_types.required")
+          PropTypes.Exception.exception(prop_name, caller_name, "prop_types.required")
         else
           nil
         end
@@ -20,7 +20,7 @@ defmodule PropTypes.TypeChecker do
       type = Tipo.typeof(value)
 
       if type != expected_type do
-        PropTypes.Error.exception(prop_name, caller_name, "prop_types.invalid_type")
+        PropTypes.Exception.exception(prop_name, caller_name, "prop_types.invalid_type")
       else
         nil
       end

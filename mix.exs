@@ -3,7 +3,7 @@ defmodule PropTypes.Mixfile do
 
   def project do
     [app: :prop_types,
-     version: "0.0.1",
+     version: "0.0.2",
      description: description,
      package: package,
      elixir: "~> 1.2",
