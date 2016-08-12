@@ -1,4 +1,4 @@
-# PropTypes
+# PropTypes [![Build Status](https://travis-ci.org/nathanfaucett/ex-prop_types.svg?branch=master)](https://travis-ci.org/nathanfaucett/ex-prop_types)
 
 Property Type validations and checkers for elixir apps
 
