@@ -16,7 +16,8 @@ defmodule PropTypes.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:tipo]]
+    [applications: [
+      :tipo]]
   end
 
   # Dependencies can be Hex packages:

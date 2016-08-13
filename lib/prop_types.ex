@@ -1,13 +1,14 @@
 defmodule PropTypes do
 
-  def create_type_checker(validate), do: PropTypes.TypeChecker.create(validate)
+
+  def create_type_checker(validate), do: PropTypes.Checker.create(validate)
   def create_primitive_type_checker(expected_type), do: PropTypes.TypeChecker.create_primitive(expected_type)
 
-  def create_checker(prop_types, caller_name), do: PropTypes.TypeChecker.create_checker(prop_types, caller_name)
-  def create_checker(prop_types), do: PropTypes.TypeChecker.create_checker(prop_types)
+  def create_checker(prop_types, caller_name), do: PropTypes.Checker.create_checker(prop_types, caller_name)
+  def create_checker(prop_types), do: PropTypes.Checker.create_checker(prop_types)
 
-  def check(props, prop_types, caller_name), do: PropTypes.TypeChecker.check(props, prop_types, caller_name)
-  def check(props, prop_types), do: PropTypes.TypeChecker.check(props, prop_types)
+  def check(props, prop_types, caller_name), do: PropTypes.Checker.check(props, prop_types, caller_name)
+  def check(props, prop_types), do: PropTypes.Checker.check(props, prop_types)
 
   def atom(), do: create_primitive_type_checker(:atom)
   def boolean(), do: create_primitive_type_checker(:boolean)
@@ -31,8 +32,8 @@ defmodule PropTypes do
       end
     end)
 
-    create_type_checker(fn (props, prop_name, caller_name, _) ->
-      check(Map.get(props, prop_name), expected_interface, caller_name <> "." <> prop_name)
+    PropTypes.Checker.create(fn (props, prop_name, caller_name, _) ->
+      PropTypes.Checker.check(Map.get(props, prop_name), expected_interface, caller_name <> "." <> prop_name)
     end)
   end
 

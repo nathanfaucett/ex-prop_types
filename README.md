@@ -26,8 +26,9 @@ props = %{
     :required => true
   },
   "password" => %{
-    :validations => [PropType.requires("username"), PropTypes.string, min_length(6)],
+    :validations => [PropTypes.string, requires("username"), min_length(6)],
     :required => true
+  }
 }
 
 ```
